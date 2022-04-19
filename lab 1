@@ -1,0 +1,120 @@
+cqlsh> create keyspace employee with replication = {'class':'SimpleStrategy', 'replication_factor':3};
+cqlsh> use employee;
+cqlsh:employee> create table employee_info(emp_id int primary key, emp_name text, designation text, doj timestamp, salary double, dept_name text);
+cqlsh:employee> describe tables
+
+employee_info
+
+cqlsh:employee> describe table student_info
+
+Column family 'student_info' not found
+cqlsh:employee> describe employee_info
+
+CREATE TABLE employee.employee_info (
+    emp_id int PRIMARY KEY,
+    dept_name text,
+    designation text,
+    doj timestamp,
+    emp_name text,
+    salary double
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:employee> insert into employee_info(emp_id, emp_name, designation, doj, salary, dept_name) values(11, 'Harry', 'Developer', '2019-03-1', 100000, 'software');
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | salary
+--------+-----------+-------------+---------------------------------+----------+--------
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |  1e+05
+
+(1 rows)
+cqlsh:employee> insert into employee_info(emp_id, emp_name, designation, doj, salary, dept_name) values(22, 'Son', 'Front End', '2020-05-1', 100000, 'software');
+cqlsh:employee> insert into employee_info(emp_id, emp_name, designation, doj, salary, dept_name) values(33, 'Dejan', 'Front End', '2017-05-1',2000000, 'hardware');
+cqlsh:employee> insert into employee_info(emp_id, emp_name, designation, doj, salary, dept_name) values(44, 'Bruno', 'Front End', '2017-12-1',200000, 'hardware');
+cqlsh:employee> insert into employee_info(emp_id, emp_name, designation, doj, salary, dept_name) values(55, 'Pogba', 'Manager', '2017-10-1',250000, 'Poject');
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | salary
+--------+-----------+-------------+---------------------------------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba | 2.5e+05
+     33 |  hardware |   Front End | 2017-04-30 18:30:00.000000+0000 |    Dejan |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |   1e+05
+
+(5 rows)
+cqlsh:employee> update employee_info set emp_name = 'Ronaldo', dept_name = 'Testing' where emp_id = 33;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | salary
+--------+-----------+-------------+---------------------------------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba | 2.5e+05
+     33 |   Testing |   Front End | 2017-04-30 18:30:00.000000+0000 |  Ronaldo |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |   1e+05
+
+(5 rows)
+cqlsh:employee> select * from employee_info order by salary asc;
+cqlsh:employee> alter table employee_info add projects text;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | projects | salary
+--------+-----------+-------------+---------------------------------+----------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba |     null | 2.5e+05
+     33 |   Testing |   Front End | 2017-04-30 18:30:00.000000+0000 |  Ronaldo |     null |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |     null |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |     null |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |     null |   1e+05
+
+(5 rows)
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | projects | salary
+--------+-----------+-------------+---------------------------------+----------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba |     null | 2.5e+05
+     33 |   Testing |   Front End | 2017-04-30 18:30:00.000000+0000 |  Ronaldo |     null |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |     null |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |     null |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |     null |   1e+05
+
+(5 rows)
+cqlsh:employee> update employee_info set projects = 'aa' where emp_id = 11;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | projects | salary
+--------+-----------+-------------+---------------------------------+----------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba |     null | 2.5e+05
+     33 |   Testing |   Front End | 2017-04-30 18:30:00.000000+0000 |  Ronaldo |     null |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |       aa |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |     null |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |     null |   1e+05
+
+(5 rows)
+cqlsh:employee> update employee_info set projects = 'bb' where emp_id = 22;
+cqlsh:employee> update employee_info set projects = 'cc' where emp_id = 33;
+cqlsh:employee> update employee_info set projects = 'dd' where emp_id = 44;
+cqlsh:employee> update employee_info set projects = 'ee' where emp_id = 55;
+cqlsh:employee> select * from employee_info;
+
+ emp_id | dept_name | designation | doj                             | emp_name | projects | salary
+--------+-----------+-------------+---------------------------------+----------+----------+---------
+     55 |    Poject |     Manager | 2017-09-30 18:30:00.000000+0000 |    Pogba |       ee | 2.5e+05
+     33 |   Testing |   Front End | 2017-04-30 18:30:00.000000+0000 |  Ronaldo |       cc |   2e+06
+     11 |  software |   Developer | 2019-02-28 18:30:00.000000+0000 |    Harry |       aa |   1e+05
+     44 |  hardware |   Front End | 2017-11-30 18:30:00.000000+0000 |    Bruno |       dd |   2e+05
+     22 |  software |   Front End | 2020-04-30 18:30:00.000000+0000 |      Son |       bb |   1e+05
+
+(5 rows)
