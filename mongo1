@@ -1,0 +1,252 @@
+use Student_db
+switched to db Student_db
+> db.createCollection("Student");
+{ "ok" : 1 }
+> show tables
+Student
+> db.Student.drop();
+true
+> show tables;
+> db.createCollection("Student");
+{ "ok" : 1 }
+> show tables;
+Student
+> db.Student.insert({_id:1, name:"Pankaj", sem:6, hobbies:"listening music"});
+WriteResult({ "nInserted" : 1 })
+> db.Student.update({_id:3, name:"Aryan", sem:5}, {$set:{hobbies:"skating"}}, {upsert:true});
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : 3 })
+> db.Student.find().pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+> db.Student.find({_id:1}, {name:1, sem:1, _id:0});
+{ "name" : "Pankaj", "sem" : 6 }
+> db.Student.find({}, {name:1, sem:1, _id:0});
+{ "name" : "Pankaj", "sem" : 6 }
+{ "name" : "Aryan", "sem" : 5 }
+ db.Student.insert({_id:2, name:"Puneeth", sem:7});
+WriteResult({ "nInserted" : 1 })
+> db.Student.find({sem:{$eq:7}});
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7 }
+> db.Student.update({_id:2, name:"Puneeth", sem:7}, {$set:{hobbies:"chess"}},{upsert:true});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find({hobbies:{$in:["chess", "skating"]}}).pretty();
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.find({name:/^P/}).pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.find({name:/e/}).pretty();
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.count();
+3
+> db.Student.find().sort({name:-1}).pretty();
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+ mongoexport --db Student_db --collection --fields --type=csv --out C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --db Student_db --collection Student --fields --type=csv --out C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --db Student_db --collection Student --type=csv --out C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --host localhost --db Student_db --collection Student --type=csv --out C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --host localhost --db Student_db --collection Student --csv --out C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --host localhost --db Student_db --collection Student --csv --out C:\Users\panka\Desktop\1.csv
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --host localhost --db Student_db --collection Student --csv --out C:\Users\panka\Desktop\1.csv --fields "name","sem"
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --db Student_db --collection Student --csv --out C:\Users\panka\Desktop\1.csv --fields "name","sem"
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --db Student_db --collection Student --csv --out "C:\Users\panka\Desktop\1.csv" --fields "name","sem"
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> mongoexport --db=Student_db --collection=Student --type=csv --out=C:\Users\panka\Desktop\1.csv;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:14
+> db.Student.update({_id:1},{$set:{location:"Bangalore"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty();
+{
+        "_id" : 1,
+        "name" : "Pankaj",
+        "sem" : 6,
+        "hobbies" : "listening music",
+        "location" : "Bangalore"
+}
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.update({_id:1},{$unset:{location:"Bangalore"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Student.find().pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.find({sem{$ne:7}}).pretty();
+uncaught exception: SyntaxError: missing : after property id :
+@(shell):1:20
+> db.Student.find({sem:{$ne:7}}).pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+> db.Student.find({name:/j$/}).pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+> db.Student.find().pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+> db.Student.insert({_id:4, name:"Shivam", sem:6, hobbies:"cartoons"});
+WriteResult({ "nInserted" : 1 })
+> db.Student.count({sem:6});
+2
+> db.Student.find().limit(2).pretty();
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+> db.Student.find().sort({name:1}).pretty();
+{ "_id" : 3, "name" : "Aryan", "sem" : 5, "hobbies" : "skating" }
+{ "_id" : 1, "name" : "Pankaj", "sem" : 6, "hobbies" : "listening music" }
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+{ "_id" : 4, "name" : "Shivam", "sem" : 6, "hobbies" : "cartoons" }
+> db.Student.find().skip(2).pretty();
+{ "_id" : 2, "name" : "Puneeth", "sem" : 7, "hobbies" : "chess" }
+{ "_id" : 4, "name" : "Shivam", "sem" : 6, "hobbies" : "cartoons" }
+use Student_db
+switched to db Student_db
+> db.createCollection("food");
+{ "ok" : 1 }
+> show tables;
+Student
+food
+> db.food.insert({_id:1, fruits:['grapes', 'mango', 'apple']});
+WriteResult({ "nInserted" : 1 })
+> db.food.insert({_id:1, fruits:['grapes', 'mango', 'cherry']});
+WriteResult({
+        "nInserted" : 0,
+        "writeError" : {
+                "code" : 11000,
+                "errmsg" : "E11000 duplicate key error collection: Student_db.food index: _id_ dup key: { _id: 1.0 }"
+        }
+})
+> db.food.insert({_id:2, fruits:['grapes', 'mango', 'cherry']});
+WriteResult({ "nInserted" : 1 })
+> db.food.insert({_id:3, fruits:['banana', 'mango']});
+WriteResult({ "nInserted" : 1 })
+> db.food.find().pretty();
+{ "_id" : 1, "fruits" : [ "grapes", "mango", "apple" ] }
+{ "_id" : 2, "fruits" : [ "grapes", "mango", "cherry" ] }
+{ "_id" : 3, "fruits" : [ "banana", "mango" ] }
+> db.food.find({fruits:['grapes','mango', 'apple']});
+{ "_id" : 1, "fruits" : [ "grapes", "mango", "apple" ] }
+> db.food.find({fruits.1:'grapes'});
+uncaught exception: SyntaxError: missing : after property id :
+@(shell):1:20
+> db.food.find({'fruits.1':'grapes'});
+> db.food.find({"fruits":{$size:2}});
+{ "_id" : 3, "fruits" : [ "banana", "mango" ] }
+> db.food.find({"fruits":{$slice:2}});
+Error: error: {
+        "ok" : 0,
+        "errmsg" : "unknown operator: $slice",
+        "code" : 2,
+        "codeName" : "BadValue"
+}
+> db.food.find({_id:1},{"fruits":{$slice:2}});
+{ "_id" : 1, "fruits" : [ "grapes", "mango" ] }
+> db.food.find({fruits:{$all:['grapes', 'mango']}});
+{ "_id" : 1, "fruits" : [ "grapes", "mango", "apple" ] }
+{ "_id" : 2, "fruits" : [ "grapes", "mango", "cherry" ] }
+> db.food.update({_id:3},{$set:{'fruits.1':'apple'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.food.find().pretty();
+{ "_id" : 1, "fruits" : [ "grapes", "mango", "apple" ] }
+{ "_id" : 2, "fruits" : [ "grapes", "mango", "cherry" ] }
+{ "_id" : 3, "fruits" : [ "banana", "apple" ] }
+> db.food.update({_id:2},{$push:{price:{grapes:80,mango:200,cherry:100}}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.food.find().pretty();
+{ "_id" : 1, "fruits" : [ "grapes", "mango", "apple" ] }
+{
+        "_id" : 2,
+        "fruits" : [
+                "grapes",
+                "mango",
+                "cherry"
+        ],
+        "price" : [
+                {
+                        "grapes" : 80,
+                        "mango" : 200,
+                        "cherry" : 100
+                }
+        ]
+}
+{ "_id" : 3, "fruits" : [ "banana", "apple" ] }
+> db.createCollection("Customers");
+{ "ok" : 1 }
+> show tables;
+Customers
+Student
+food
+> db.Customers.insert({_id:1, type:'S', bal:50000.00});
+WriteResult({ "nInserted" : 1 })
+> db.Customers.insert({_id:2, type:'C', bal:450000.00});
+WriteResult({ "nInserted" : 1 })
+> db.Customers.insert({_id:3, type:'S', bal:40000.00});
+WriteResult({ "nInserted" : 1 })
+> db.Customers.insert({_id:4, type:'S', bal:80000.00});
+WriteResult({ "nInserted" : 1 })
+> db.Customers.find().pretty();
+{ "_id" : 1, "type" : "S", "bal" : 50000 }
+{ "_id" : 2, "type" : "C", "bal" : 450000 }
+{ "_id" : 3, "type" : "S", "bal" : 40000 }
+{ "_id" : 4, "type" : "S", "bal" : 80000 }
+> db.Customers.aggregate({$group:{_id:"_id", totbal:{$sum:"$bal"}}});
+{ "_id" : "_id", "totbal" : 620000 }
+> db.Customers.aggregate({$match:{type:'S'}},{$group:{_id:"_id", totbal:{$sum:"$bal"}}});
+{ "_id" : "_id", "totbal" : 170000 }
+> db.Customers.aggregate({$match:{type:'S'}},{$group:{_id:"_id", totbal:{$sum:"$bal"}}},{$match:{totbal:{$gt:49000}}});
+{ "_id" : "_id", "totbal" : 170000 }
+> db.createCollection("Alphabets");
+{ "ok" : 1 }
+> show tables;
+Alphabets
+Customers
+Student
+food
+> db.Alphabets.insert({_id:1, alphabet:'A'}, {_id:2, alphabet:'B'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.find();
+{ "_id" : 1, "alphabet" : "A" }
+> db.Alphabets.insert({_id:2, alphabet:'B'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.insert({_id:3, alphabet:'C'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.insert({_id:4, alphabet:'D'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.insert({_id:5, alphabet:'E'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.insert({_id:6, alphabet:'F'});
+WriteResult({ "nInserted" : 1 })
+> db.Alphabets.find()[4];
+{ "_id" : 5, "alphabet" : "E" }
+> db.Alphabets.find()limit(4);
+SyntaxError: unexpected token: identifier :
+@(shell):1:19
+> db.Alphabets.find().limit(4);
+{ "_id" : 1, "alphabet" : "A" }
+{ "_id" : 2, "alphabet" : "B" }
+{ "_id" : 3, "alphabet" : "C" }
+{ "_id" : 4, "alphabet" : "D" }
+> db.Alphabets.find().limit(4).pretty();
+{ "_id" : 1, "alphabet" : "A" }
+{ "_id" : 2, "alphabet" : "B" }
+{ "_id" : 3, "alphabet" : "C" }
+{ "_id" : 4, "alphabet" : "D" }
